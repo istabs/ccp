@@ -1,10 +1,10 @@
 {
-  "id": "./ccp.html",
+  "id": "./index.html",
   "name": "CCP",
   "short_name": "CCP",
   "lang": "pt",
   "description": "Código dos Contratos Públicos: pesquisa e navegação por artigos.",
-  "start_url": "./ccp.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
