@@ -45,7 +45,7 @@ h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] { scroll-margin-top: 180px; }
 @media print { #ccp-search { display: none; } }
 </style>
 <style>
-#ccp-location { position: fixed; right: 20px; top: 24px; width: 280px; z-index: 11; font: 14px/1.4 system-ui, sans-serif; }
+#ccp-location { position: fixed; left: 20px; top: 24px; width: 280px; z-index: 11; font: 14px/1.4 system-ui, sans-serif; }
 #ccp-location[hidden] { display: none; }
 #location-details { padding: 14px; border: 1px solid #c5ccd4; border-radius: 12px; background: #f4f6f8; box-shadow: 0 4px 18px #20252b15; }
 #location-details summary { cursor: pointer; font-weight: 650; }
@@ -59,8 +59,8 @@ h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] { scroll-margin-top: 180px; }
 .location-epigraph { margin-top: 4px; overflow-wrap: anywhere; }
 .location-empty { padding: 12px; color: #536273; }
 #location-scroll { writing-mode: vertical-lr; direction: rtl; width: 20px; height: min(65vh, 560px); margin: 0; accent-color: #174c85; cursor: ns-resize; }
-@media (min-width: 1200px) { body { max-width: min(900px, calc(100vw - 390px)); margin-right: 330px; } }
-@media (max-width: 1199px) { #ccp-location { top: auto; bottom: 16px; right: 12px; width: 260px; } #location-boxes { max-height: 38vh; } #location-scroll { height: 38vh; } body { padding-bottom: 90px; } }
+@media (min-width: 1200px) { body { max-width: min(900px, calc(100vw - 390px)); margin-left: 330px; } }
+@media (max-width: 1199px) { #ccp-location { top: auto; bottom: 16px; left: 12px; width: 260px; } #location-boxes { max-height: 38vh; } #location-scroll { height: 38vh; } body { padding-bottom: 90px; } }
 @media print { #ccp-location { display: none; } body { max-width: none; margin: 0; } }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
@@ -89,9 +89,9 @@ h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] { scroll-margin-top: 180px; }
   <label for="search-input">Pesquisar no CCP</label>
   <input id="search-input" type="search" placeholder="Palavra ou expressão…" autocomplete="off" aria-describedby="search-count">
   <output id="search-count" role="status" aria-live="polite">0 resultados</output>
-  <button id="search-prev" type="button" disabled title="Shift+Enter">Anterior</button>
-  <button id="search-next" type="button" disabled title="Enter">Seguinte</button>
-  <button id="search-clear" type="button">Limpar</button>
+  <button id="search-prev" class="ccp-nav-button" type="button" disabled aria-label="Resultado anterior" title="Resultado anterior (Shift+Enter)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
+  <button id="search-next" class="ccp-nav-button" type="button" disabled aria-label="Resultado seguinte" title="Resultado seguinte (Enter)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+  <button id="search-clear" class="ccp-nav-button" type="button" aria-label="Limpar pesquisa" title="Limpar pesquisa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
 </form>
 <header class="ccp-brand"><a href="https://ggl.pt" target="_blank" rel="noopener noreferrer" aria-label="GGL — abrir ggl.pt"><svg class="ccp-logo" xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 503 506" role="img" aria-labelledby="ggl-title ggl-description">
   <title id="ggl-title">GGL</title>
