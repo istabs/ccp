@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 503 506" role="img" aria-labelledby="ggl-title ggl-description">
+  <title id="ggl-title">GGL</title>
+  <desc id="ggl-description">Símbolo circular preto com um quadrante superior direito preenchido, interior cinzento e contorno branco exterior com a mesma espessura da faixa circular preta.</desc>
+  <path d="M251 3 H499 V252 C499 389.52 388.02 501 250.5 501 C112.98 501 2 389.52 2 252 C2 114.48 112.98 3 251 3 Z" fill="#ffffff"/>
+  <path d="M251 43 H459 V252 C459 367.43 365.88 461 250.5 461 C135.12 461 42 367.43 42 252 C42 136.57 135.12 43 251 43 Z" fill="#000"/>
+  <path d="M251 83 V252 H419 C419 345.33 344.33 421 251 421 C157.67 421 82 345.33 82 252 C82 158.67 157.67 83 251 83 Z" fill="#dedede"/>
+</svg>
