@@ -1,8 +1,8 @@
 /* Generated with a content version: a new export refreshes the offline document. */
 const PREFIX = 'ccp:' + self.registration.scope + ':';
 const CACHE = PREFIX + '9da5cc7a6cf1d6b0';
-const ASSETS = ["ccp.html", "manifest.webmanifest", "icons/GGL.svg", "icons/ccp-180.png", "icons/ccp-192.png", "icons/ccp-512.png"].map(path => new URL(path, self.registration.scope).href);
-const DOCUMENT = new URL('ccp.html', self.registration.scope).href;
+const ASSETS = ["index.html", "manifest.webmanifest", "icons/GGL.svg", "icons/ccp-180.png", "icons/ccp-192.png", "icons/ccp-512.png"].map(path => new URL(path, self.registration.scope).href);
+const DOCUMENT = new URL('index.html', self.registration.scope).href;
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
 });
