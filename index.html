@@ -4137,6 +4137,8 @@ h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] { scroll-margin-top: 180px; }
   const home = document.getElementById('ccp-home');
   const back = document.getElementById('ccp-back');
   const originals = new WeakMap();
+  const offsetParameter = 'position-offset';
+  const scrollParameter = 'position-scroll';
   function local(url) {
     return url.origin === location.origin && url.pathname === location.pathname;
   }
@@ -4151,17 +4153,28 @@ h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] { scroll-margin-top: 180px; }
   function currentLocation() {
     const url = new URL(location.href);
     const hash = window.ccpCurrentLocationHash?.();
-    if (hash === undefined || hash === url.hash) return url.href;
-    const previous = url.href;
-    url.hash = hash;
-    // Uma posição alcançada por scroll é um novo degrau: ao voltar dela,
-    // regressa-se primeiro ao último destino navegado.
-    url.searchParams.set('previous', previous);
+    if (hash !== undefined && hash !== url.hash) {
+      const previous = url.href;
+      url.hash = hash;
+      // Uma posição alcançada por scroll é um novo degrau: ao voltar dela,
+      // regressa-se primeiro ao último destino navegado.
+      url.searchParams.set('previous', previous);
+    }
+    let target;
+    try { target = document.getElementById(decodeURIComponent(url.hash.slice(1))); }
+    catch { target = document.getElementById(url.hash.slice(1)); }
+    if (target) {
+      const offset = target.getBoundingClientRect().top - window.innerHeight / 2;
+      url.searchParams.set(offsetParameter, String(Math.round(offset * 100) / 100));
+    } else url.searchParams.delete(offsetParameter);
+    url.searchParams.set(scrollParameter, String(Math.round(window.scrollY * 100) / 100));
     return url.href;
   }
   function destination(href) {
     const url = new URL(href, location.href);
     if (!local(url) || !url.hash) return null;
+    url.searchParams.delete(offsetParameter);
+    url.searchParams.delete(scrollParameter);
     url.searchParams.set('previous', currentLocation());
     return url;
   }
@@ -4178,14 +4191,44 @@ h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] { scroll-margin-top: 180px; }
       if (url) link.href = url.href;
     }
   }
-  function move(url) {
+  function anchor(url) {
+    if (!url.hash) return null;
+    let id;
+    try { id = decodeURIComponent(url.hash.slice(1)); } catch { id = url.hash.slice(1); }
+    return document.getElementById(id);
+  }
+  function restorePosition(url) {
+    const target = anchor(url);
+    const offsetValue = url.searchParams.get(offsetParameter);
+    const scrollValue = url.searchParams.get(scrollParameter);
+    const offset = offsetValue === null ? NaN : Number(offsetValue);
+    const savedScroll = scrollValue === null ? NaN : Number(scrollValue);
+    if (target && Number.isFinite(offset)) {
+      const top = window.scrollY + target.getBoundingClientRect().top
+        - (window.innerHeight / 2 + offset);
+      window.scrollTo({top, behavior: 'instant'});
+    } else if (Number.isFinite(savedScroll)) {
+      window.scrollTo({top: savedScroll, behavior: 'instant'});
+    } else if (target) target.scrollIntoView({block: 'start'});
+    else window.scrollTo({top: 0, behavior: 'instant'});
+  }
+  function move(url, restore = false) {
     history.pushState(null, '', url.href);
     refresh();
-    if (url.hash) {
-      let id;
-      try { id = decodeURIComponent(url.hash.slice(1)); } catch { id = url.hash.slice(1); }
-      document.getElementById(id)?.scrollIntoView({block: 'start'});
-    } else window.scrollTo({top: 0, behavior: 'instant'});
+    const target = anchor(url);
+    if (restore) {
+      restorePosition(url);
+      const visible = new URL(url.href);
+      visible.searchParams.delete(offsetParameter);
+      visible.searchParams.delete(scrollParameter);
+      history.replaceState(null, '', visible.href);
+      // Fontes, pesquisa e painéis recolhíveis podem alterar o layout após o salto.
+      requestAnimationFrame(() => {
+        restorePosition(url);
+        requestAnimationFrame(() => restorePosition(url));
+      });
+    } else if (target) target.scrollIntoView({block: 'start'});
+    else window.scrollTo({top: 0, behavior: 'instant'});
     window.dispatchEvent(new Event('hashchange'));
   }
   window.ccpNavigate = href => {
@@ -4211,7 +4254,7 @@ h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] { scroll-margin-top: 180px; }
   });
   back.addEventListener('click', () => {
     const url = previous();
-    if (url) move(url);
+    if (url) move(url, true);
   });
   window.addEventListener('popstate', refresh);
   window.addEventListener('hashchange', refresh);
@@ -4326,7 +4369,6 @@ h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] { scroll-margin-top: 180px; }
   const boxes = document.getElementById('location-boxes');
   const slider = document.getElementById('location-scroll');
   const percent = document.getElementById('location-percent');
-  const search = document.getElementById('ccp-search');
   const headings = [...document.querySelectorAll('[data-ccp-kind]')];
   const units = [], stack = [];
   for (const heading of headings) {
@@ -4405,7 +4447,8 @@ h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] { scroll-margin-top: 180px; }
     slider.value = Math.round(progress * 1000);
     percent.textContent = `${Math.round(progress * 100)}%`;
     slider.setAttribute('aria-valuetext', `${Math.round(progress * 100)}% do documento`);
-    const line = Math.max(24, search.getBoundingClientRect().bottom + 24);
+    // A unidade atual é a que ocupa a linha horizontal a meio da janela.
+    const line = window.innerHeight / 2;
     // Pesquisa binária das posições reais: continua correta após pesquisa e resize.
     let lo = 0, hi = units.length - 1, index = -1;
     while (lo <= hi) {
